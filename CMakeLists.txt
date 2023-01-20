@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(maiku-http)
+project(maiku-http CXX)
 
-add_executable(maiku-http main.cpp)
+OPTION (BUILD_SHARED_LIBS "Build shared libraries." ON)
 
-install(TARGETS maiku-http RUNTIME DESTINATION bin)
+include_directories( ${CMAKE_SOURCE_DIR}/src/headers )
+add_subdirectory(src)
