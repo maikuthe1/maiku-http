@@ -32,7 +32,7 @@ namespace MaikuHTTPLib{
         void Start();
         void Stop();
         ~Server();
-        void ProcessRequest(const std::string message);
+        Request* ProcessRequest(const std::string message, int socketDescriptor);
 
     private:
         void Listen();
