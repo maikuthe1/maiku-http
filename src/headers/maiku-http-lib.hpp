@@ -25,6 +25,7 @@
 class MaikuHTTPServer {
 public:
     MaikuHTTPServer(int port);
+    void Start();
     ~MaikuHTTPServer();
 
 private:

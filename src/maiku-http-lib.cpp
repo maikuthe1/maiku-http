@@ -3,6 +3,11 @@
 
 
 MaikuHTTPServer::MaikuHTTPServer(int port) : port(port) {
+
+}
+
+void MaikuHTTPServer::Start()
+{
     bzero((char*)&servAddr, sizeof(servAddr));
     servAddr.sin_family = AF_INET;
     servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -25,6 +30,7 @@ MaikuHTTPServer::MaikuHTTPServer(int port) : port(port) {
     this->Listen();
 }
 
+
 MaikuHTTPServer::~MaikuHTTPServer() {
 
 }
@@ -45,7 +51,9 @@ void MaikuHTTPServer::Listen() {
         while(1)
         {
             memset(&msg, 0, sizeof(msg));
+            std::cout << "hello1" << std::endl;
             int bytesIn = recv(newSd, (char*)&msg, sizeof(msg), 0);
+            std::cout << "hello2" << std::endl;
             if(bytesIn == 0)
             {
                 break;
