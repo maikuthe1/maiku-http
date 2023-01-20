@@ -8,14 +8,17 @@ set(CMAKE_AUTORCC ON)
 # set(CMAKE_BUILD_DIR ${PROJECT_SOURCE_DIR}/build)
 
 set(maiku-http_LIB
+    util.cpp
+    maiku-http-header.cpp
     maiku-http-server.cpp
 )
 
 set(maiku-http_INCLUDES
-    headers/maiku-http-server.hpp
+    headers/util.hpp
     headers/maiku-http-header.hpp
     headers/maiku-http-request.hpp
     headers/maiku-http-response.hpp
+    headers/maiku-http-server.hpp
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -shared")
