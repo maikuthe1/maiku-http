@@ -1,12 +1,13 @@
 #include "headers/util.hpp"
-#include "headers/maiku-http-lib.hpp"
+#include "headers/maiku-http-server.hpp"
 
+using namespace MaikuHTTPLib;
 
-MaikuHTTPServer::MaikuHTTPServer(int port) : port(port) {
+Server::Server(int port) : port(port) {
 
 }
 
-void MaikuHTTPServer::Start()
+void Server::Start()
 {
     bzero((char*)&servAddr, sizeof(servAddr));
     servAddr.sin_family = AF_INET;
@@ -30,16 +31,17 @@ void MaikuHTTPServer::Start()
     this->Listen();
 }
 
-
-MaikuHTTPServer::~MaikuHTTPServer() {
-
+void Server::Stop()
+{
+    close(serverSd);
 }
 
-void MaikuHTTPServer::Listen() {
-    while(true)
+void Server::Listen()
+{
+    char msg[1500];
+    listen(serverSd, 5);
+    while(1)
     {
-        char msg[1500];
-        listen(serverSd, 5);
         sockaddr_in newSockAddr;
         socklen_t newSockAddrSize = sizeof(newSockAddr);
         int newSd = accept(serverSd, (sockaddr *)&newSockAddr, &newSockAddrSize);
@@ -47,34 +49,29 @@ void MaikuHTTPServer::Listen() {
         {
             std::cerr << "Error accepting request from client!" << std::endl;
         }
-        int bytesRead, bytesWritten = 0;
-        while(1)
+
+        memset(&msg, 0, sizeof(msg));
+        int bytesIn = recv(newSd, (char*)&msg, sizeof(msg), 0);
+        if(bytesIn == 0)
         {
-            memset(&msg, 0, sizeof(msg));
-            std::cout << "hello1" << std::endl;
-            int bytesIn = recv(newSd, (char*)&msg, sizeof(msg), 0);
-            std::cout << "hello2" << std::endl;
-            if(bytesIn == 0)
-            {
-                break;
-            }
-
-            this->ProcessRequest(std::string(msg));
-
-            std::string responseHeader = std::string("HTTP/1.1 200 OK\r\nServer: Maiku-HTTP/0.1 (Unix)\r\nContent-Type: text/html\r\nConnection: keep-alive\r\n\r\n");
-            std::string response = std::string("<html><body><h1>Hello, World!</h1></body></html>");
-
-            bytesWritten += send(newSd, responseHeader.c_str(), strlen(responseHeader.c_str()), 0);
-            bytesWritten += send(newSd, response.c_str(), strlen(response.c_str()), 0);
-            close(newSd);
             break;
         }
+
+        this->ProcessRequest(std::string(msg));
+
+        std::string responseHeader = std::string("HTTP/1.1 200 OK\r\nServer: Maiku-HTTP/0.1 (Unix)\r\nContent-Type: text/html\r\nConnection: keep-alive\r\n\r\n");
+        std::string response = std::string("<html><body><h1>Hello, World!</h1></body></html>");
+
+        send(newSd, responseHeader.c_str(), strlen(responseHeader.c_str()), 0);
+        send(newSd, response.c_str(), strlen(response.c_str()), 0);
+        close(newSd);
+        // break;
     }
-    close(serverSd);
+    this->Stop();
 }
 
 
-void MaikuHTTPServer::ProcessRequest(const std::string message)
+void Server::ProcessRequest(const std::string message)
 {
     std::cout << message << std::endl;
     // Map to store header key/vals
@@ -99,3 +96,8 @@ void MaikuHTTPServer::ProcessRequest(const std::string message)
     std::cout << "User agent: " << request_data["user-agent"] << std::endl;
 }
 
+
+Server::~Server()
+{
+    Stop();
+}
