@@ -26,7 +26,7 @@ std::vector<std::string> split(const std::string& str, const std::string& delim)
     return tokens;
 }
 
-std::string concat(const std::vector<std::string>& strings, const std::string& delim = "") noexcept
+std::string concat(const std::vector<std::string>& strings, const std::string& delim) noexcept
 {
     std::string result;
 

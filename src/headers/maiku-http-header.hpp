@@ -10,12 +10,13 @@ namespace MaikuHTTPLib
     public:
         Header();
         Header(const std::string &header);
-        std::string Get(const std::string &key);
         void Set(const std::string &key, const std::string &value);
+        std::string Key();
+        std::string Value();
         std::string Serialize();
         void Deserialize(const std::string &header);
 
     private:
-        std::map<std::string, std::string> data;
+        std::string key, value;
     };
 }

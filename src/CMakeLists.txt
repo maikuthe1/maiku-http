@@ -10,6 +10,7 @@ set(CMAKE_AUTORCC ON)
 set(maiku-http_LIB
     util.cpp
     maiku-http-header.cpp
+    maiku-http-request.cpp
     maiku-http-server.cpp
 )
 

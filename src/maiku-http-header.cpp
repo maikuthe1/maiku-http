@@ -16,7 +16,16 @@ MaikuHTTPLib::Header::Header ( const std::string& header )
 
 void Header::Deserialize ( const std::string& header )
 {
+    if(header.size() == 0)
+        return;
+    std::vector<std::string> segments = util::split(header, " ");
+    if(segments.size() == 0)
+        return;
+    const std::string key = segments[0].substr(0, segments[0].size() - 1);
+    segments.erase(segments.begin());
+    const std::string value = util::concat(segments, " ");
 
+    this->Set(util::str_tolower(key), value);
 }
 
 std::string Header::Serialize()
@@ -24,11 +33,18 @@ std::string Header::Serialize()
     return "";
 }
 
-std::string Header::Get ( const std::string& key )
-{
-    return "";
-}
-
 void Header::Set ( const std::string& key, const std::string& value )
 {
+    this->key = util::str_tolower(key);
+    this->value = value;
+}
+
+std::string Header::Key()
+{
+    return key;
+}
+
+std::string Header::Value()
+{
+    return value;
 }

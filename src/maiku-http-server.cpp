@@ -48,8 +48,11 @@ void handleConnection(Server* server, int newSd, sockaddr_in newSockAddr)
             break;
         }
 
-        Request * request = server->ProcessRequest(std::string(msg), newSd);
-
+        Request *request = new Request(std::string(msg));
+        for(Header header : request->headers)
+        {
+            std::cout << "Key: " << header.Key() << std::endl << "Value: " << header.Value() << std::endl << std::endl;
+        }
     }
 
     close(newSd);
@@ -85,7 +88,7 @@ void Server::Listen()
     this->Stop();
 }
 
-
+/*
 Request* Server::ProcessRequest(const std::string message, int socketDescriptor)
 {
     std::cout << message << std::endl;
@@ -115,8 +118,8 @@ Request* Server::ProcessRequest(const std::string message, int socketDescriptor)
 
     std::cout << "User agent: " << request_data["user-agent"] << std::endl;
 
-    return new Request();
-}
+    return new Request(message);
+}*/
 
 
 Server::~Server()
