@@ -36,13 +36,33 @@ void Server::Stop()
     close(serverSd);
 }
 
+void handleConnection(Server* server, int newSd, sockaddr_in newSockAddr)
+{
+    char msg[1500];
+    memset(&msg, 0, sizeof(msg));
+    int bytesIn = recv(newSd, (char*)&msg, sizeof(msg), 0);
+    if(bytesIn == 0)
+    {
+        return;
+    }
+
+    server->ProcessRequest(std::string(msg));
+
+    std::string responseHeader = std::string("HTTP/1.1 200 OK\r\nServer: Maiku-HTTP/0.1 (Unix)\r\nContent-Type: text/html\r\nConnection: keep-alive\r\n\r\n");
+    std::string response = std::string("<html><body><h1>Hello, World!</h1></body></html>");
+
+    send(newSd, responseHeader.c_str(), strlen(responseHeader.c_str()), 0);
+    send(newSd, response.c_str(), strlen(response.c_str()), 0);
+    close(newSd);
+}
+
 void Server::Listen()
 {
     char msg[1500];
     listen(serverSd, 5);
     while(1)
     {
-        sockaddr_in newSockAddr;
+         sockaddr_in newSockAddr;
         socklen_t newSockAddrSize = sizeof(newSockAddr);
         int newSd = accept(serverSd, (sockaddr *)&newSockAddr, &newSockAddrSize);
         if(newSd < 0)
@@ -50,22 +70,9 @@ void Server::Listen()
             std::cerr << "Error accepting request from client!" << std::endl;
         }
 
-        memset(&msg, 0, sizeof(msg));
-        int bytesIn = recv(newSd, (char*)&msg, sizeof(msg), 0);
-        if(bytesIn == 0)
-        {
-            break;
-        }
-
-        this->ProcessRequest(std::string(msg));
-
-        std::string responseHeader = std::string("HTTP/1.1 200 OK\r\nServer: Maiku-HTTP/0.1 (Unix)\r\nContent-Type: text/html\r\nConnection: keep-alive\r\n\r\n");
-        std::string response = std::string("<html><body><h1>Hello, World!</h1></body></html>");
-
-        send(newSd, responseHeader.c_str(), strlen(responseHeader.c_str()), 0);
-        send(newSd, response.c_str(), strlen(response.c_str()), 0);
-        close(newSd);
-        // break;
+        // Create a new thread and pass newSd, newSockAddr and this as arguments
+        std::thread t(handleConnection, this, newSd, newSockAddr);
+        t.detach();  // Detach the thread so it runs in the background
     }
     this->Stop();
 }

@@ -20,6 +20,7 @@
 #include <map>
 #include <algorithm>
 #include <cctype>
+#include <thread>
 #include "maiku-http-header.hpp"
 #include "maiku-http-request.hpp"
 #include "maiku-http-response.hpp"
@@ -31,12 +32,13 @@ namespace MaikuHTTPLib{
         void Start();
         void Stop();
         ~Server();
+        void ProcessRequest(const std::string message);
 
     private:
         void Listen();
-        void ProcessRequest(const std::string message);
         int port;
         sockaddr_in servAddr;
         int serverSd;
+
     };
 }
