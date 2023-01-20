@@ -49,6 +49,9 @@ void handleConnection(Server* server, int newSd, sockaddr_in newSockAddr)
         }
 
         Request *request = new Request(std::string(msg));
+        std::cout << "Method: " << MaikuHTTPLib::to_string(request->method) << std::endl;
+        std::cout << "Resource: " << request->resource << std::endl;
+        std::cout << "Version: " << MaikuHTTPLib::to_string(request->version) << std::endl;
         for(Header header : request->headers)
         {
             std::cout << "Key: " << header.Key() << std::endl << "Value: " << header.Value() << std::endl << std::endl;
