@@ -9,6 +9,8 @@ set(CMAKE_AUTORCC ON)
 
 set(maiku-http_LIB
     util.cpp
+    maiku-http-version.cpp
+    maiku-http-method.cpp
     maiku-http-header.cpp
     maiku-http-request.cpp
     maiku-http-server.cpp
@@ -16,6 +18,8 @@ set(maiku-http_LIB
 
 set(maiku-http_INCLUDES
     headers/util.hpp
+    headers/maiku-http-version.hpp
+    headers/maiku-http-method.hpp
     headers/maiku-http-header.hpp
     headers/maiku-http-request.hpp
     headers/maiku-http-response.hpp
