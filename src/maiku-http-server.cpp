@@ -47,44 +47,47 @@ void handleConnection(Server* server, int newSd, sockaddr_in newSockAddr)
         {
             break;
         }
-
-        Request *request = new Request(std::string(msg));
-        std::cout << "Method: " << MaikuHTTPLib::to_string(request->method) << std::endl;
-        std::cout << "Resource: " << request->resource << std::endl;
-        std::cout << "Version: " << MaikuHTTPLib::to_string(request->version) << std::endl;
-        for(Header header : request->headers)
+        try
         {
-            std::cout << "Key: " << header.Key() << std::endl << "Value: " << header.Value() << std::endl << std::endl;
-        }
-        std::cout << "Body: " << request->body << std::endl << std::endl;
+            Request *request = new Request(std::string(msg));
+            std::cout << "Method: " << MaikuHTTPLib::to_string(request->method) << std::endl;
+            std::cout << "Resource: " << request->resource << std::endl;
+            std::cout << "Version: " << MaikuHTTPLib::to_string(request->version) << std::endl;
+            for(Header header : request->headers)
+            {
+                std::cout << "Key: " << header.Key() << std::endl << "Value: " << header.Value() << std::endl << std::endl;
+            }
+            std::cout << "Body: " << request->body << std::endl << std::endl;
 
-        if(request->method == Method::GET)
+            if(request->method == Method::GET)
+            {
+
+                std::ifstream notFound("404.html");
+
+                std::stringstream buffer;
+                buffer << notFound.rdbuf();
+
+                std::string fourohfour = buffer.str();
+
+                notFound.close();
+
+                std::string responseHeader = std::string("HTTP/1.1 404 NOTFOUND\r\nServer: Maiku-HTTP/0.1 (Unix)\r\nContent-Type: text/html\r\nContent-Length: "+ std::to_string(static_cast<int>(fourohfour.size())) +"\r\nConnection: Close\r\n\r\n");
+
+                std::string fullResponse = responseHeader + fourohfour;
+
+                send(newSd, fullResponse.c_str(), strlen(fullResponse.c_str()), 0);
+
+                break;
+            }
+        }
+        catch (std::exception)
         {
-
-            std::ifstream notFound("404.html");
-
-            std::stringstream buffer;
-            buffer << notFound.rdbuf();
-
-            std::string fourohfour = buffer.str();
-
-            notFound.close();
-
-            std::string responseHeader = std::string("HTTP/1.1 404 NOTFOUND\r\nServer: Maiku-HTTP/0.1 (Unix)\r\nContent-Type: text/html\r\nContent-Length: "+ std::to_string(static_cast<int>(fourohfour.size())) +"\r\nConnection: Close\r\n\r\n");
-
-            std::string fullResponse = responseHeader + fourohfour;
-
-            send(newSd, fullResponse.c_str(), strlen(fullResponse.c_str()), 0);
+            break;
         }
+
     }
 
     close(newSd);
-
-
-
-    //send(newSd, responseHeader.c_str(), strlen(responseHeader.c_str()), 0);
-    //send(newSd, response.c_str(), strlen(response.c_str()), 0);
-    //close(newSd);
 }
 
 void Server::Listen()
