@@ -12,7 +12,7 @@ Request::Request(const std::string &request)
 
     if(lines.size() == 0)
     {
-        throw std::runtime_error("Empty request.");
+        return;
     }
 
     std::vector<std::string> segments = util::split(lines[0], " ");
