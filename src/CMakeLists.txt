@@ -13,6 +13,7 @@ set(maiku-http_LIB
     maiku-http-method.cpp
     maiku-http-header.cpp
     maiku-http-request.cpp
+    maiku-http-response.cpp
     maiku-http-server.cpp
 )
 
