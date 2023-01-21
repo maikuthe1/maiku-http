@@ -5,6 +5,9 @@ using namespace MaikuHTTPLib;
 
 Request::Request(const std::string &request)
 {
+    method  = Method::UNKNOWN;
+    version = Version::UNKNOWN;
+
     std::vector<std::string> lines = util::split(request, "\r\n");
 
     if(lines.size() == 0)
@@ -32,4 +35,15 @@ Request::Request(const std::string &request)
 
         headers.push_back(line);
     }
+
+    std::size_t pos = request.find("\r\n\r\n");
+    if(pos != std::string::npos)
+    {
+        try
+        {
+            body = request.substr(pos);
+        }
+        catch (std::exception) { }
+    }
+
 }
