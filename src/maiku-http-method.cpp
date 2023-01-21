@@ -2,7 +2,7 @@
 
 using namespace MaikuHTTPLib;
 
-std::string to_string(Method method)
+std::string MaikuHTTPLib::to_string(Method method)
 {
     switch(method)
     {
@@ -29,7 +29,7 @@ std::string to_string(Method method)
     return "UNKNOWN";
 }
 
-Method method_from_string (const std::string& method) noexcept
+Method MaikuHTTPLib::method_from_string (const std::string& method) noexcept
 {
     if (method == MaikuHTTPLib::to_string(Method::GET))
     {

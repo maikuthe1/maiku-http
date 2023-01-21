@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cctype>
 #include <thread>
+#include <filesystem>
 #include "maiku-http-header.hpp"
 #include "maiku-http-request.hpp"
 #include "maiku-http-response.hpp"

@@ -3,7 +3,7 @@
 using namespace MaikuHTTPLib;
 
 
-std::string to_string(Version version)
+std::string MaikuHTTPLib::to_string(Version version)
 {
     switch(version)
     {
@@ -21,7 +21,7 @@ std::string to_string(Version version)
 }
 
 
-Version version_from_string (const std::string& version) noexcept
+Version MaikuHTTPLib::version_from_string (const std::string& version) noexcept
 {
     if (version == MaikuHTTPLib::to_string(Version::HTTP_1_0))
     {

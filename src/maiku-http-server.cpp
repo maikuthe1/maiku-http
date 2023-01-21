@@ -56,12 +56,31 @@ void handleConnection(Server* server, int newSd, sockaddr_in newSockAddr)
         {
             std::cout << "Key: " << header.Key() << std::endl << "Value: " << header.Value() << std::endl << std::endl;
         }
+        std::cout << "Body: " << request->body << std::endl << std::endl;
+
+        if(request->method == Method::GET)
+        {
+
+            std::ifstream notFound("404.html");
+
+            std::stringstream buffer;
+            buffer << notFound.rdbuf();
+
+            std::string fourohfour = buffer.str();
+
+            notFound.close();
+
+            std::string responseHeader = std::string("HTTP/1.1 404 NOTFOUND\r\nServer: Maiku-HTTP/0.1 (Unix)\r\nContent-Type: text/html\r\nContent-Length: "+ std::to_string(static_cast<int>(fourohfour.size())) +"\r\nConnection: Close\r\n\r\n");
+
+            std::string fullResponse = responseHeader + fourohfour;
+
+            send(newSd, fullResponse.c_str(), strlen(fullResponse.c_str()), 0);
+        }
     }
 
     close(newSd);
 
-    //std::string response = std::string("<html><body><h1>Hello, World!</h1></body></html>");
-    //std::string responseHeader = std::string("HTTP/1.1 200 OK\r\nServer: Maiku-HTTP/0.1 (Unix)\r\nContent-Type: text/html\r\nConnection: keep-alive\r\n\r\n");
+
 
     //send(newSd, responseHeader.c_str(), strlen(responseHeader.c_str()), 0);
     //send(newSd, response.c_str(), strlen(response.c_str()), 0);
@@ -90,39 +109,6 @@ void Server::Listen()
     }
     this->Stop();
 }
-
-/*
-Request* Server::ProcessRequest(const std::string message, int socketDescriptor)
-{
-    std::cout << message << std::endl;
-    // Map to store header key/vals
-    std::map<std::string, std::string> request_data;
-    // Split the header by \r\n
-    std::vector<std::string> lines = util::split(message, "\r\n");
-    if(lines.size() == 0)
-    {
-        //close(socketDescriptor);
-        //return;
-    }
-    // For each line, split into key/val and add to request_data
-    for(const std::string &line : lines)
-    {
-        if(line.size() == 0)
-            continue;
-        std::vector<std::string> segments = util::split(line, " ");
-        if(segments.size() == 0)
-            continue;
-        const std::string key = segments[0].substr(0, segments[0].size() - 1);
-        segments.erase(segments.begin());
-        const std::string value = util::concat(segments, " ");
-
-        request_data[util::str_tolower(key)] = value;
-    }
-
-    std::cout << "User agent: " << request_data["user-agent"] << std::endl;
-
-    return new Request(message);
-}*/
 
 
 Server::~Server()
