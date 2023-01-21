@@ -10,6 +10,7 @@ namespace MaikuHTTPLib
     public:
         Header();
         Header(const std::string &header);
+        Header(const std::string &key, const std::string &value);
         void Set(const std::string &key, const std::string &value);
         std::string Key();
         std::string Value();

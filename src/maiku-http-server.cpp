@@ -71,9 +71,12 @@ void handleConnection(Server* server, int newSd, sockaddr_in newSockAddr)
 
                 notFound.close();
 
-                std::string responseHeader = std::string("HTTP/1.1 404 NOTFOUND\r\nServer: Maiku-HTTP/0.1 (Unix)\r\nContent-Type: text/html\r\nContent-Length: "+ std::to_string(static_cast<int>(fourohfour.size())) +"\r\nConnection: Close\r\n\r\n");
+                Response response(MaikuHTTPLib::Version::HTTP_1_1, 404, "NotFound");
+                response.headers.push_back(MaikuHTTPLib::Header("Content-Type", "text/html"));
+                response.headers.push_back(MaikuHTTPLib::Header("Connection", "close"));
+                response.body = fourohfour;
 
-                std::string fullResponse = responseHeader + fourohfour;
+                std::string fullResponse = response.Serialize();
 
                 send(newSd, fullResponse.c_str(), strlen(fullResponse.c_str()), 0);
 

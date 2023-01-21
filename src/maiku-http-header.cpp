@@ -13,6 +13,10 @@ MaikuHTTPLib::Header::Header ( const std::string& header )
     Deserialize(header);
 }
 
+MaikuHTTPLib::Header::Header ( const std::string& key, const std::string &value )
+{
+    Set(key, value);
+}
 
 void Header::Deserialize ( const std::string& header )
 {
